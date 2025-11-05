@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telephone Exchange Complaint System</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #219955;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section h2 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        .complain-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-ongoing {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .status-rectified {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .complain-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Telephone Exchange Complaint System</div>
+                <div class="user-info" id="userInfo">
+                    <!-- User info will be populated after login -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-container">
+            <div class="login-form">
+                <h2>Login to Complaint System</h2>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <button id="loginBtn" class="full-width">Login</button>
+            </div>
+        </div>
+
+        <!-- Main Application (hidden until login) -->
+        <div id="mainApp" style="display: none;">
+            <!-- Section 1: Complaint Form -->
+            <div class="section">
+                <h2>Register New Complaint</h2>
+                <form id="complaintForm" class="complain-form">
+                    <div class="form-group">
+                        <label for="telephoneNumber">Telephone Number</label>
+                        <input type="text" id="telephoneNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriber">Subscriber Name</label>
+                        <input type="text" id="subscriber" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="faultType">Fault Type</label>
+                        <select id="faultType" required>
+                            <option value="">Select Fault Type</option>
+                            <option value="No Dial Tone">No Dial Tone</option>
+                            <option value="Line Noise">Line Noise</option>
+                            <option value="Cannot Receive Calls">Cannot Receive Calls</option>
+                            <option value="Cannot Make Calls">Cannot Make Calls</option>
+                            <option value="Intermittent Connection">Intermittent Connection</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintFrom">Complaint Received From</label>
+                        <input type="text" id="complaintFrom" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="btn-success">Submit Complaint</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section 2: Ongoing Complaints -->
+            <div class="section">
+                <h2>Ongoing Complaints</h2>
+                <table id="ongoingTable">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Date & Time</th>
+                            <th>Telephone No.</th>
+                            <th>Subscriber</th>
+                            <th>Address</th>
+                            <th>Fault Type</th>
+                            <th>Logged By</th>
+                            <th>Informed To</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Ongoing complaints will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 3: Rectified Complaints -->
+            <div class="section">
+                <h2>Rectified Complaints</h2>
+                <table id="rectifiedTable">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Date & Time</th>
+                            <th>Telephone No.</th>
+                            <th>Subscriber</th>
+                            <th>Address</th>
+                            <th>Fault Type</th>
+                            <th>Logged By</th>
+                            <th>Rectified By</th>
+                            <th>Rectified On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rectified complaints will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for assigning technician -->
+    <div id="assignTechModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Technician</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="technicianSelect">Select Technician</label>
+                <select id="technicianSelect">
+                    <option value="">Select Technician</option>
+                    <option value="Tech 1">Tech 1</option>
+                    <option value="Tech 2">Tech 2</option>
+                    <option value="Tech 3">Tech 3</option>
+                    <option value="Tech 4">Tech 4</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button id="saveTechBtn" class="btn-success">Save</button>
+                <button id="cancelTechBtn" class="btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for marking as rectified -->
+    <div id="rectifyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Mark Complaint as Rectified</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="rectifyTechSelect">Select Technician Who Rectified</label>
+                <select id="rectifyTechSelect">
+                    <option value="">Select Technician</option>
+                    <option value="Tech 1">Tech 1</option>
+                    <option value="Tech 2">Tech 2</option>
+                    <option value="Tech 3">Tech 3</option>
+                    <option value="Tech 4">Tech 4</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button id="confirmRectifyBtn" class="btn-success">Confirm</button>
+                <button id="cancelRectifyBtn" class="btn-danger">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Telephone Exchange Complaint Management System &copy; 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // User data
+        const users = [
+            { id: 'riyatcm', password: 'tcmriya', name: 'Riya' },
+            { id: 'rajeshtcm', password: 'tcmrajesh', name: 'Rajesh' },
+            { id: 'adityatcm', password: 'tcmaditya', name: 'Aditya' },
+            { id: 'priyankasee', password: 'ssepriyanka', name: 'Priyanka' },
+            { id: 'ranajitsse', password: 'sseranajit', name: 'Ranajit' },
+            { id: 'suniltcm', password: 'tcmsunil', name: 'Sunil' }
+        ];
+
+        // Complaint data storage
+        let complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+        let currentUser = null;
+        let currentComplaintId = null;
+
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const mainApp = document.getElementById('mainApp');
+        const userInfo = document.getElementById('userInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        const complaintForm = document.getElementById('complaintForm');
+        const ongoingTable = document.getElementById('ongoingTable').getElementsByTagName('tbody')[0];
+        const rectifiedTable = document.getElementById('rectifiedTable').getElementsByTagName('tbody')[0];
+        const assignTechModal = document.getElementById('assignTechModal');
+        const rectifyModal = document.getElementById('rectifyModal');
+
+        // Login functionality
+        loginBtn.addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = users.find(u => u.id === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                loginSection.style.display = 'none';
+                mainApp.style.display = 'block';
+                userInfo.innerHTML = `<span>Hello ${user.name}</span>`;
+                renderComplaints();
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+
+        // Generate a 5-digit complaint ID
+        function generateComplaintId() {
+            return Math.floor(10000 + Math.random() * 90000).toString();
+        }
+
+        // Handle complaint form submission
+        complaintForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const complaint = {
+                id: generateComplaintId(),
+                telephoneNumber: document.getElementById('telephoneNumber').value,
+                subscriber: document.getElementById('subscriber').value,
+                address: document.getElementById('address').value,
+                faultType: document.getElementById('faultType').value,
+                complaintFrom: document.getElementById('complaintFrom').value,
+                dateTime: new Date().toLocaleString(),
+                loggedBy: currentUser.name,
+                informedTo: '',
+                rectified: false,
+                rectifiedBy: '',
+                rectifiedOn: ''
+            };
+            
+            complaints.push(complaint);
+            localStorage.setItem('complaints', JSON.stringify(complaints));
+            renderComplaints();
+            complaintForm.reset();
+            
+            alert(`Complaint registered successfully! Complaint ID: ${complaint.id}`);
+        });
+
+        // Render complaints in tables
+        function renderComplaints() {
+            // Clear tables
+            ongoingTable.innerHTML = '';
+            rectifiedTable.innerHTML = '';
+            
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                
+                if (!complaint.rectified) {
+                    // Ongoing complaints
+                    row.innerHTML = `
+                        <td>${complaint.id}</td>
+                        <td>${complaint.dateTime}</td>
+                        <td>${complaint.telephoneNumber}</td>
+                        <td>${complaint.subscriber}</td>
+                        <td>${complaint.address}</td>
+                        <td>${complaint.faultType}</td>
+                        <td>${complaint.loggedBy}</td>
+                        <td>${complaint.informedTo || 'Not Assigned'}</td>
+                        <td class="action-buttons">
+                            ${!complaint.informedTo ? 
+                                `<button class="action-btn assign-tech" data-id="${complaint.id}">Assign Tech</button>` : 
+                                `<button class="action-btn mark-rectified" data-id="${complaint.id}">Mark Rectified</button>`
+                            }
+                        </td>
+                    `;
+                    ongoingTable.appendChild(row);
+                } else {
+                    // Rectified complaints
+                    row.innerHTML = `
+                        <td>${complaint.id}</td>
+                        <td>${complaint.dateTime}</td>
+                        <td>${complaint.telephoneNumber}</td>
+                        <td>${complaint.subscriber}</td>
+                        <td>${complaint.address}</td>
+                        <td>${complaint.faultType}</td>
+                        <td>${complaint.loggedBy}</td>
+                        <td>${complaint.rectifiedBy}</td>
+                        <td>${complaint.rectifiedOn}</td>
+                    `;
+                    rectifiedTable.appendChild(row);
+                }
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.assign-tech').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentComplaintId = this.getAttribute('data-id');
+                    assignTechModal.style.display = 'flex';
+                });
+            });
+            
+            document.querySelectorAll('.mark-rectified').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentComplaintId = this.getAttribute('data-id');
+                    rectifyModal.style.display = 'flex';
+                });
+            });
+        }
+
+        // Assign technician functionality
+        document.getElementById('saveTechBtn').addEventListener('click', function() {
+            const technician = document.getElementById('technicianSelect').value;
+            
+            if (technician) {
+                const complaint = complaints.find(c => c.id === currentComplaintId);
+                if (complaint) {
+                    complaint.informedTo = technician;
+                    localStorage.setItem('complaints', JSON.stringify(complaints));
+                    renderComplaints();
+                    assignTechModal.style.display = 'none';
+                    document.getElementById('technicianSelect').value = '';
+                }
+            } else {
+                alert('Please select a technician');
+            }
+        });
+
+        // Mark as rectified functionality
+        document.getElementById('confirmRectifyBtn').addEventListener('click', function() {
+            const technician = document.getElementById('rectifyTechSelect').value;
+            
+            if (technician) {
+                const complaint = complaints.find(c => c.id === currentComplaintId);
+                if (complaint) {
+                    complaint.rectified = true;
+                    complaint.rectifiedBy = technician;
+                    complaint.rectifiedOn = new Date().toLocaleString();
+                    localStorage.setItem('complaints', JSON.stringify(complaints));
+                    renderComplaints();
+                    rectifyModal.style.display = 'none';
+                    document.getElementById('rectifyTechSelect').value = '';
+                }
+            } else {
+                alert('Please select a technician');
+            }
+        });
+
+        // Close modal functionality
+        document.querySelectorAll('.close-modal, #cancelTechBtn, #cancelRectifyBtn').forEach(button => {
+            button.addEventListener('click', function() {
+                assignTechModal.style.display = 'none';
+                rectifyModal.style.display = 'none';
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === assignTechModal) {
+                assignTechModal.style.display = 'none';
+            }
+            if (e.target === rectifyModal) {
+                rectifyModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
